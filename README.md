@@ -10,4 +10,5 @@ flutter build apk --split-debug-info --obfuscate  --split-per-abi
 * i18n
 * sort
 * Custom NTP
+* futile lock issue in detail page
 * more feature...

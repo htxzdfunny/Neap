@@ -330,7 +330,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                   ),
                   prefixIcon: const Icon(Icons.format_list_numbered),
                 ),
-                items: const [6, 7, 8]
+                items: const [4, 5, 6, 7, 8, 9, 10]
                     .map(
                       (value) => DropdownMenuItem(
                         value: value,

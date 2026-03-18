@@ -9,6 +9,7 @@ import 'models/settings_model.dart';
 import 'services/setting_service.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,17 +38,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   DateTime? _backgroundTimestamp;
   final Duration _gracePeriod = const Duration(seconds: 5);
-
-  void _lockAppAndShowLockScreen() {
-    if (!mounted) return;
-
-    // 跳回根路由，避免 detail 页面仍然显示
-    Navigator.of(context).popUntil((route) => route.isFirst);
-
-    setState(() {
-      _isAuthenticated = false;
-    });
-  }
 
   @override
   void initState() {
@@ -78,7 +68,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (_backgroundTimestamp != null) {
         final durationAway = DateTime.now().difference(_backgroundTimestamp!);
         if (durationAway > _gracePeriod) {
-          _lockAppAndShowLockScreen();
+          setState(() {
+            _isAuthenticated = false;
+          });
           _authenticate();
         } else {
           debugPrint('在宽限期内返回，跳过验证');
@@ -99,9 +91,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     if (_isAuthenticated || _isAuthenticating) return;
-
-    // 认证前确保显示锁屏
-    _lockAppAndShowLockScreen();
 
     setState(() => _isAuthenticating = true);
 
@@ -126,6 +115,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       setState(() {
         _isAuthenticated = didAuthenticate;
       });
+
+      // 认证失败时清空导航栈
+      if (!didAuthenticate && navigatorKey.currentState != null) {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          '/',
+          (route) => false,
+        );
+      }
     } catch (e) {
       debugPrint('认证错误: $e');
       setState(() => _isAuthenticated = false);
@@ -177,6 +174,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           title: 'Neap',
           localizationsDelegates: localizationsDelegates,
           supportedLocales: supportedLocales,
+          navigatorKey: navigatorKey,
           themeMode: _getThemeMode(),
           theme: _buildTheme(
             brightness: Brightness.light,
