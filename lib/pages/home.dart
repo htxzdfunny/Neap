@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Authenticator'),
+        title: const Text('neap'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

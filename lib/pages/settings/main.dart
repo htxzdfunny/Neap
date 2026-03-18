@@ -1,5 +1,5 @@
 // settings_main_page.dart
-import 'package:authenticator/main.dart';
+import 'package:neap/main.dart';
 import 'package:flutter/material.dart';
 import '../../services/setting_service.dart';
 import 'theme.dart';

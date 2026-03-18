@@ -14,7 +14,7 @@ val keystorePropertiesFile = rootProject.file("app/key.properties")
 keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
-    namespace = "com.samuioto.authenticator"
+    namespace = "com.samuioto.neap"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.samuioto.authenticator"
+        applicationId = "com.samuioto.neap"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

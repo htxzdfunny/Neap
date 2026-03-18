@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         return MaterialApp(
-          title: 'Authenticator',
+          title: 'Neap',
           localizationsDelegates: localizationsDelegates,
           supportedLocales: supportedLocales,
           themeMode: _getThemeMode(),

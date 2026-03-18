@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
     <application
-        android:label="authenticator"
+        android:label="Neap"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
