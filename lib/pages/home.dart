@@ -1,0 +1,196 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import '../models/account_model.dart';
+import '../services/storage_service.dart';
+import 'add.dart';
+import 'detail.dart';
+import 'settings/main.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final StorageService _storage = StorageService();
+  List<TotpAccount> _accounts = [];
+  bool _isLoading = true;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccounts();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  Future<void> _loadAccounts() async {
+    final accounts = await _storage.getAccounts();
+    setState(() {
+      _accounts = accounts;
+      _isLoading = false;
+    });
+  }
+
+  void _addAccount(TotpAccount account) async {
+    await _storage.saveAccount(account);
+    _loadAccounts();
+  }
+
+  void _updateAccount(
+    TotpAccount oldAccount,
+    String newLabel,
+    String newIssuer,
+    String newAvatarType, [
+    String? avatarImagePath,
+  ]) async {
+    final updatedAccount = TotpAccount(
+      id: oldAccount.id,
+      label: newLabel,
+      issuer: newIssuer,
+      secret: oldAccount.secret,
+      interval: oldAccount.interval,
+      digits: oldAccount.digits,
+      avatarType: newAvatarType,
+      avatarImagePath: avatarImagePath,
+    );
+    await _storage.updateAccount(updatedAccount);
+    _loadAccounts();
+  }
+
+  void _deleteAccount(String id) async {
+    await _storage.deleteAccount(id);
+    _loadAccounts();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Authenticator'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsMainPage()),
+              ).then((_) => _loadAccounts());
+            },
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _accounts.isEmpty
+          ? _buildEmptyState()
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _accounts.length,
+              itemBuilder: (context, index) {
+                final account = _accounts[index];
+                return _buildAccountTile(account);
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push<TotpAccount>(
+            context,
+            MaterialPageRoute(builder: (_) => const AddAccountPage()),
+          );
+          if (result != null) _addAccount(result);
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.qr_code_scanner, size: 80, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            '暂无信息',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '点击右下角 + 按钮添加',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccountTile(TotpAccount account) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: SizedBox(
+          width: 48,
+          height: 48,
+          child: account.getAvatarWidget(
+            size: 48,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.1),
+            iconColor: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        title: Text(
+          account.label,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(account.issuer),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AccountDetailPage(
+                account: account,
+                onDelete: () => _deleteAccount(account.id),
+                onUpdate:
+                    (newLabel, newIssuer, newAvatarType, [avatarImagePath]) =>
+                        _updateAccount(
+                          account,
+                          newLabel,
+                          newIssuer,
+                          newAvatarType,
+                          avatarImagePath,
+                        ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

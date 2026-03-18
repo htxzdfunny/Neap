@@ -10,8 +10,15 @@
 .history
 .svn/
 .swiftpm/
+*.pem
+*.jks
 migrate_working_dir/
 
+# self
+todo
+.VSCodeCounter/
+.hvigor/
+ohos/build-profile.json5
 # IntelliJ related
 *.iml
 *.ipr
