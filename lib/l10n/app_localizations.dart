@@ -107,6 +107,10 @@ class AppLocalizations {
       'save_settings_error': 'Failed to save settings',
       'app_locked': 'App Locked',
       'unlock': 'Unlock',
+      'easter_egg_title': 'samuiord',
+      'type_message': 'Type a message...',
+      'send': 'Send',
+      'secret_message_received': 'Now...?',
     },
     'zh': {
       'app_title': 'Neap',
@@ -195,6 +199,10 @@ class AppLocalizations {
       'save_settings_error': '保存设置失败',
       'app_locked': '应用已锁定',
       'unlock': '解锁',
+      'easter_egg_title': 'samuiord',
+      'type_message': '输入消息...',
+      'send': '发送',
+      'secret_message_received': '现在吗...还有点早',
     },
     'ja': {
       'app_title': 'Neap',
@@ -285,6 +293,10 @@ class AppLocalizations {
       'japanese': '日本語',
       'app_locked': 'アプリがロックされました',
       'unlock': 'ロック解除',
+      'easter_egg_title': 'samuiord',
+      'type_message': 'メッセージを入力...',
+      'send': '送信',
+      'secret_message_received': 'まだその時じゃない...',
     },
   };
 
@@ -511,6 +523,19 @@ class AppLocalizations {
 
   String get unlock =>
       _localizedValues[locale.languageCode]?['unlock'] ?? 'Unlock';
+
+  String get easterEggTitle =>
+      _localizedValues[locale.languageCode]?['easter_egg_title'] ?? 'samuiord';
+
+  String get typeMessage =>
+      _localizedValues[locale.languageCode]?['type_message'] ??
+      'Type a message...';
+
+  String get send => _localizedValues[locale.languageCode]?['send'] ?? 'Send';
+
+  String get secretMessageReceived =>
+      _localizedValues[locale.languageCode]?['secret_message_received'] ??
+      'Now?';
 
   String initialConfirmDeleteMessage(String label) {
     final template =
