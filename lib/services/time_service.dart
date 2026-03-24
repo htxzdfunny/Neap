@@ -51,6 +51,16 @@ class TimeService {
     _startSyncTimer();
   }
 
+  DateTime get currentTime {
+    if (!_useNetworkTime ||
+        _cachedNetworkTime == null ||
+        _lastSyncTime == null) {
+      return DateTime.now();
+    }
+    final offset = DateTime.now().difference(_lastSyncTime!);
+    return _cachedNetworkTime!.add(offset);
+  }
+
   void _startSyncTimer() {
     _syncTimer?.cancel();
     if (_useNetworkTime) {

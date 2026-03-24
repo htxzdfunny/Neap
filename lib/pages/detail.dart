@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:neap/main.dart';
 import 'package:neap/services/time_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -78,6 +79,7 @@ class _AccountDetailPageState extends State<AccountDetailPage>
     final remaining = _account.interval - (now % _account.interval);
     final code = _account.generateCode(time: nowDateTime);
 
+    if (!mounted) return;
     setState(() {
       _currentCode = code;
       _remainingSeconds = remaining;
@@ -225,8 +227,8 @@ class _AccountDetailPageState extends State<AccountDetailPage>
                 ),
                 const SizedBox(height: 12),
                 Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
+                  spacing: 8,
+                  runSpacing: 16,
                   children: [
                     _buildAvatarOption(
                       'default',
@@ -251,80 +253,95 @@ class _AccountDetailPageState extends State<AccountDetailPage>
 
   Widget _buildAvatarOption(String type, IconData icon, String label) {
     final isSelected = _account.avatarType == type;
+    return SizedBox(
+      width: 72,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _account = TotpAccount(
+              id: _account.id,
+              label: _account.label,
+              issuer: _account.issuer,
+              secret: _account.secret,
+              interval: _account.interval,
+              digits: _account.digits,
+              avatarType: type,
+            );
+          });
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _account = TotpAccount(
-            id: _account.id,
-            label: _account.label,
-            issuer: _account.issuer,
-            secret: _account.secret,
-            interval: _account.interval,
-            digits: _account.digits,
-            avatarType: type,
-          );
-        });
-
-        if (widget.onUpdate != null) {
-          widget.onUpdate!(_account.label, _account.issuer, type, null);
-        }
-        Navigator.pop(context);
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: isSelected
-                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
-                : Colors.grey.shade200,
-            child: Icon(
-              icon,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.grey[700],
+          if (widget.onUpdate != null) {
+            widget.onUpdate!(_account.label, _account.issuer, type, null);
+          }
+          Navigator.pop(context);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: isSelected
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                  : Colors.grey.shade200,
+              child: Icon(
+                icon,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey[700],
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.grey[700],
+            const SizedBox(height: 6),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              softWrap: true,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.1,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey[700],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildGalleryOption() {
     final t = AppLocalizations.of(context);
-    return GestureDetector(
-      onTap: _pickImageFromGallery,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.grey.shade200,
-            child: Icon(Icons.photo_library, color: Colors.grey[700]),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            t.fromGallery,
-            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-          ),
-        ],
+    return SizedBox(
+      width: 72,
+      child: GestureDetector(
+        onTap: _pickImageFromGallery,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: Colors.grey.shade200,
+              child: Icon(Icons.photo_library, color: Colors.grey[700]),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              t.fromGallery,
+              textAlign: TextAlign.center,
+              softWrap: true,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.1,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future<void> _pickImageFromGallery() async {
     final t = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     try {
       Permission permissionToRequest;
       if (Theme.of(context).platform == TargetPlatform.android) {
@@ -398,19 +415,30 @@ class _AccountDetailPageState extends State<AccountDetailPage>
         );
 
         if (image != null) {
+          MyAppState.shouldSkipAuthentication = true;
           final CroppedFile? croppedFile = await ImageCropper().cropImage(
             sourcePath: image.path,
             aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
             uiSettings: [
               AndroidUiSettings(
                 toolbarTitle: t.cropImage,
+                toolbarColor: theme.colorScheme.primary,
+                statusBarColor: theme.colorScheme.primary,
+                toolbarWidgetColor: theme.colorScheme.onPrimary,
+                activeControlsWidgetColor: theme.colorScheme.primary,
+
                 initAspectRatio: CropAspectRatioPreset.square,
                 lockAspectRatio: true,
+                hideBottomControls: false,
+                showCropGrid: true,
               ),
               IOSUiSettings(
-                title: t.shop,
+                title: t.cropImage,
+                doneButtonTitle: t.save,
+                cancelButtonTitle: t.cancel,
                 aspectRatioLockEnabled: true,
                 resetAspectRatioEnabled: false,
+                minimumAspectRatio: 1.0,
               ),
             ],
           );

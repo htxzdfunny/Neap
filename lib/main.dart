@@ -22,14 +22,14 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 
   // ignore: library_private_types_in_public_api
-  static _MyAppState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_MyAppState>();
+  static MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<MyAppState>();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final SettingsService _settingsService = SettingsService();
   AppSettings _currentSettings = AppSettings.defaults;
   bool _isLoading = true;
@@ -42,6 +42,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final Duration _gracePeriod = const Duration(seconds: 5);
 
   final TimeService _timeService = TimeService();
+
+  static bool shouldSkipAuthentication = false;
 
   @override
   void initState() {
@@ -88,6 +90,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (!requireAuth) return;
 
     if (state == AppLifecycleState.resumed) {
+      if (shouldSkipAuthentication) {
+        debugPrint('调用内部模块，跳过验证');
+        shouldSkipAuthentication = false;
+        setState(() => _isAuthenticated = true);
+        _backgroundTimestamp = null;
+        return;
+      }
       if (_backgroundTimestamp != null) {
         final durationAway = DateTime.now().difference(_backgroundTimestamp!);
         if (durationAway > _gracePeriod) {
@@ -230,7 +239,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           currentLocale = const Locale('en', 'US');
           break;
         default:
-          currentLocale = WidgetsBinding.instance.platformDispatcher.locale;
+          currentLocale = const Locale('en', 'US');
       }
       final appLocalizations = await const AppLocalizationsDelegate().load(
         currentLocale,

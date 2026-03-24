@@ -48,7 +48,6 @@ class AppLocalizations {
       'confirm_delete': 'Confirm Delete',
       'confirm_delete_message':
           'Are you sure you want to delete "{label}"? This cannot be undone.',
-      'confirm_delete_prompt': 'This is your last chance, delete "{label}"?',
       'photo_permission_required':
           'Photo permission is required to select images. Please enable permissions in settings.',
       'barcode_permission_required':
@@ -97,12 +96,11 @@ class AppLocalizations {
       'empty_accounts_title': 'No accounts yet',
       'empty_accounts_hint': 'Tap the + button to add your first account',
       'ok': 'OK',
-      'initial_confirm_delete_message':
-          'This is your first confirmation. Tap "Delete" again to confirm.',
+      'initial_confirm_delete_message': 'Tap "Delete" again to confirm.',
       'final_confirm_delete_message':
-          'This is your last chance. Tap "Delete" to permanently delete "{label}".',
-      'global_settings_subtitle': 'Language and biometric',
-      'theme_settings_subtitle': 'Theme and color',
+          'This is your last chance. Tap "Delete" again to confirm',
+      'global_settings_subtitle': 'Language, Biometric and Privacy',
+      'theme_settings_subtitle': 'Theme and color, Material You',
       'about_subtitle': 'Version and license',
       'save_settings_error': 'Failed to save settings',
       'app_locked': 'App Locked',
@@ -152,8 +150,7 @@ class AppLocalizations {
       'copied_to_clipboard': '验证码已复制到剪贴板',
       'delete': '删除',
       'confirm_delete': '确认删除',
-      'confirm_delete_message': '确定要删除 "{label}" 吗？此操作不可撤销。',
-      'confirm_delete_prompt': '这是最后一次确认，您是否要删除 "{label}"？',
+      'confirm_delete_message': '确定要删除 "{label}" 吗？该操作不可撤销',
       'photo_permission_required': '需要相册权限才能选择图片。请在设置中启用权限。',
       'barcode_permission_required': '需要相册权限才能选择图片',
       'invalid_qr_code': '无效的二维码',
@@ -198,10 +195,10 @@ class AppLocalizations {
       'empty_accounts_title': '暂无账户',
       'empty_accounts_hint': '点击 + 按钮添加第一个账户',
       'ok': '确定',
-      'initial_confirm_delete_message': '再次点击“删除”按钮确认。',
-      'final_confirm_delete_message': '这是最后一次机会，点击“删除”将永久删除 "{label}"。',
-      'global_settings_subtitle': '语言和生物识别',
-      'theme_settings_subtitle': '主题和颜色',
+      'initial_confirm_delete_message': '若信息无误，再次点击“删除”按钮。',
+      'final_confirm_delete_message': '这是最后一次机会，请再次点击“删除”',
+      'global_settings_subtitle': '语言、生物识别和隐私设置',
+      'theme_settings_subtitle': '主题和颜色，Material You',
       'about_subtitle': '版本和许可',
       'save_settings_error': '保存设置失败',
       'app_locked': '应用已锁定',
@@ -249,7 +246,6 @@ class AppLocalizations {
       'delete': '削除',
       'confirm_delete': '削除の確認',
       'confirm_delete_message': '"{label}" を削除してもよろしいですか？この操作は取り消せません。',
-      'confirm_delete_prompt': '最後の確認です。「{label}」を削除しますか？',
       'photo_permission_required': '画像を選択するには写真の許可が必要です。設定で権限を有効にしてください。',
       'barcode_permission_required': '画像を選択するには写真の許可が必要です',
       'invalid_qr_code': '無効なQRコード',
@@ -298,8 +294,8 @@ class AppLocalizations {
       'initial_confirm_delete_message': 'もう一度「削除」をタップして確定してください。',
       'final_confirm_delete_message':
           'これが最後の確認です。「削除」をタップすると "{label}" が完全に削除されます。',
-      'global_settings_subtitle': '言語と生体認証',
-      'theme_settings_subtitle': 'テーマと色',
+      'global_settings_subtitle': '言語，生体認証，プライバシー',
+      'theme_settings_subtitle': 'テーマと色，Material You',
       'about_subtitle': 'バージョンとライセンス',
       'save_settings_error': '設定の保存に失敗しました',
       'japanese': '日本語',
@@ -524,10 +520,10 @@ class AppLocalizations {
 
   String get globalSettingsSubtitle =>
       _localizedValues[locale.languageCode]?['global_settings_subtitle'] ??
-      'Language and biometric';
+      'Language, Biometric and Privacy';
   String get themeSettingsSubtitle =>
       _localizedValues[locale.languageCode]?['theme_settings_subtitle'] ??
-      'Theme and color';
+      'Theme and color, Material You';
   String get aboutSubtitle =>
       _localizedValues[locale.languageCode]?['about_subtitle'] ??
       'Version and license';
